@@ -1,4 +1,4 @@
-# Enterprise Structured Ingestion Firewall
+﻿# Enterprise Structured Ingestion Firewall
 
 A beginner-friendly AI project. You chat with an AI assistant in a React
 web app, and for every message the backend:
@@ -37,7 +37,7 @@ missing field, the app rejects it.
                                       hosted by Groq.
 
   **API**                             The backend URLs the frontend
-                                      calls, e.g. `/api/analyze`.
+                                      calls, e.g.Â `/api/analyze`.
 
   **FastAPI**                         The Python library that runs our
                                       API.
@@ -52,7 +52,7 @@ missing field, the app rejects it.
                                       like.
 
   **Intent**                          What the user wants,
-                                      e.g. `payment_issue`.
+                                      e.g.Â `payment_issue`.
 
   **Session ID**                      A unique ID for one conversation,
                                       so the backend knows which history
@@ -114,7 +114,7 @@ The application uses the detected intent to generate a context-relevant,
 Markdown-formatted response and displays it in the React chat interface.
 
 ![Week 2 -- AI response generation
-output](submission-screenshots/Week-2/week-2-response-generation.png)
+output](submission-screenshots/week-2/week-2-response-generation.png)
 
 ### Week 3 -- Conversation Memory and Chat History
 
@@ -122,14 +122,14 @@ The first screenshot shows the conversation details provided by the user
 and acknowledged by the assistant.
 
 ![Week 3 -- Conversation
-start](submission-screenshots/Week-3/week-3-conversation-start.png)
+start](submission-screenshots/week-3/week-3-conversation-start.png)
 
 The second screenshot shows the follow-up question. The assistant
 correctly recalls the name and laptop RAM details from the same
 conversation.
 
 ![Week 3 -- Context-aware follow-up
-response](submission-screenshots/Week-3/week-3-follow-up-memory.png)
+response](submission-screenshots/week-3/week-3-follow-up-memory.png)
 
 ## What you need
 
@@ -244,25 +244,25 @@ GitHub.
 
 ``` text
 enterprise-ingestion-firewall/
-├── backend/                         <-- Python API (see backend/README.md)
-│   ├── app/
-│   │   ├── main.py                  <-- all API routes
-│   │   ├── config.py                <-- reads your .env file
-│   │   ├── schemas/
-│   │   │   ├── ingestion.py         <-- Week 1 data rules (input + intent result)
-│   │   │   └── assistant.py         <-- Week 2 data rules (adds answer + session_id)
-│   │   ├── services/
-│   │   │   ├── llm_service.py       <-- Week 1: classify the message
-│   │   │   ├── response_service.py  <-- Week 2: write the answer
-│   │   │   └── database_service.py  <-- Week 3: save/load chats in SQLite
-│   │   └── utils/token_counter.py   <-- estimates token count
-│   ├── sql/schema.sql               <-- the database tables (reference)
-│   ├── tests/                       <-- pytest tests
-│   ├── .env.example                 <-- copy this to .env
-│   └── requirements.txt
-├── frontend-react/                  <-- React + Vite app (see frontend-react/README.md)
-├── submission-screenshots/          <-- screenshots for Weeks 1, 2 and 3
-└── README.md                        <-- project overview and setup
+â”œâ”€â”€ backend/                         <-- Python API (see backend/README.md)
+â”‚   â”œâ”€â”€ app/
+â”‚   â”‚   â”œâ”€â”€ main.py                  <-- all API routes
+â”‚   â”‚   â”œâ”€â”€ config.py                <-- reads your .env file
+â”‚   â”‚   â”œâ”€â”€ schemas/
+â”‚   â”‚   â”‚   â”œâ”€â”€ ingestion.py         <-- Week 1 data rules (input + intent result)
+â”‚   â”‚   â”‚   â””â”€â”€ assistant.py         <-- Week 2 data rules (adds answer + session_id)
+â”‚   â”‚   â”œâ”€â”€ services/
+â”‚   â”‚   â”‚   â”œâ”€â”€ llm_service.py       <-- Week 1: classify the message
+â”‚   â”‚   â”‚   â”œâ”€â”€ response_service.py  <-- Week 2: write the answer
+â”‚   â”‚   â”‚   â””â”€â”€ database_service.py  <-- Week 3: save/load chats in SQLite
+â”‚   â”‚   â””â”€â”€ utils/token_counter.py   <-- estimates token count
+â”‚   â”œâ”€â”€ sql/schema.sql               <-- the database tables (reference)
+â”‚   â”œâ”€â”€ tests/                       <-- pytest tests
+â”‚   â”œâ”€â”€ .env.example                 <-- copy this to .env
+â”‚   â””â”€â”€ requirements.txt
+â”œâ”€â”€ frontend-react/                  <-- React + Vite app (see frontend-react/README.md)
+â”œâ”€â”€ submission-screenshots/          <-- screenshots for Weeks 1, 2 and 3
+â””â”€â”€ README.md                        <-- project overview and setup
 ```
 
 ## Good to know
@@ -282,3 +282,4 @@ enterprise-ingestion-firewall/
     the database, tests, troubleshooting
 -   [frontend-react/README.md](frontend-react/README.md): how the React
     app is organized and connects to the API
+
