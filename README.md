@@ -1,285 +1,236 @@
-﻿# Enterprise Structured Ingestion Firewall
+# Indigo.ai – Enterprise Structured Ingestion Firewall
 
-A beginner-friendly AI project. You chat with an AI assistant in a React
-web app, and for every message the backend:
+Indigo.ai is an AI-powered customer-support chat application built with a React frontend and a FastAPI backend. It analyzes each user message, validates the structured intent result, generates a contextual Markdown response, and keeps conversation history so follow-up questions can use earlier messages.
 
-1.  **Week 1 -- Understands it.** An LLM sorts the message into a fixed
-    category (payment issue, order tracking, greeting...) and returns
-    structured JSON. Pydantic checks that JSON before anything else uses
-    it.
-2.  **Week 2 -- Answers it.** A second LLM call uses that checked JSON
-    to write a helpful reply in Markdown.
-3.  **Week 3 -- Remembers it.** Every conversation is saved in a
-    **SQLite** database, so follow-up questions ("what about my other
-    order?") make sense and you can reopen old chats.
+## Live application
 
-The "firewall" idea: the AI's output is not trusted until it passes a
-strict schema. If the model returns a category that doesn't exist or a
-missing field, the app rejects it.
+| Component | URL |
+|---|---|
+| **Frontend (Vercel)** | https://ai-engineer-workshop-plum.vercel.app |
+| **Backend (Render)** | https://ai-engineer-workshop-fxux.onrender.com |
+| **Backend health check** | https://ai-engineer-workshop-fxux.onrender.com/health |
+| **Interactive API documentation** | https://ai-engineer-workshop-fxux.onrender.com/docs |
 
-## What you will learn
+Open the frontend URL to use Indigo.ai. The health-check URL verifies that the backend is responding. The `/` route is not the API's home page, so use `/health` or `/docs` to check the backend.
 
--   Building an API with **FastAPI**
--   Calling a cloud LLM (**Groq**) from Python
--   Getting **structured output** from an LLM with **Instructor**
--   **Validating** data with **Pydantic**
--   Saving chat history in **SQLite** (built into Python, no server
-    needed)
--   Building a **React + Vite** frontend and connecting it to an API
+## Project overview
 
-## Key words (quick glossary)
+The backend processes a message in stages:
 
-  -----------------------------------------------------------------------
-  Word                                Meaning in this project
-  ----------------------------------- -----------------------------------
-  **LLM**                             Large Language Model, the AI that
-                                      reads and writes text. We use one
-                                      hosted by Groq.
+1. **Week 1 – Understands it:** An LLM classifies the message into a supported intent and returns structured data. Pydantic validates the result before the application uses it.
+2. **Week 2 – Answers it:** A second LLM call uses the validated intent and context to generate a helpful Markdown response.
+3. **Week 3 – Remembers it:** Conversation messages are stored with a session ID, allowing the assistant to answer follow-up questions using previous messages and allowing users to revisit conversations.
+4. **Week 4 – Deployment and live application testing:** The React frontend is deployed on Vercel and the FastAPI backend is deployed on Render. The screenshots show the deployed application, its connected status, and a generated chat response.
 
-  **API**                             The backend URLs the frontend
-                                      calls, e.g.Â `/api/analyze`.
+## Features
 
-  **FastAPI**                         The Python library that runs our
-                                      API.
+- Intent detection and structured message analysis
+- Risk profile and priority classification
+- Pydantic schema validation
+- Context-aware AI responses in Markdown
+- Conversation sessions and follow-up memory
+- Conversation history, search, archive, restore, and rename features
+- React chat interface with responsive layout
+- API documentation through Swagger UI
+- Separate frontend and backend deployments
 
-  **Pydantic**                        Checks that data has the right
-                                      fields and allowed values.
+## Technology stack
 
-  **Instructor**                      Makes the LLM reply in a shape that
-                                      matches our Pydantic model.
+- **Frontend:** React, Vite, JavaScript
+- **Backend:** Python, FastAPI
+- **LLM provider:** Groq
+- **Structured output and validation:** Instructor, Pydantic
+- **Database:** SQLite locally; deployed database configuration is provided through environment variables
+- **Deployment:** Vercel (frontend), Render (backend)
 
-  **Schema**                          The rules for what valid data looks
-                                      like.
+## Workshop screenshots
 
-  **Intent**                          What the user wants,
-                                      e.g.Â `payment_issue`.
+The screenshots below document the project outputs and deployment tests. Image paths are relative to the repository root.
 
-  **Session ID**                      A unique ID for one conversation,
-                                      so the backend knows which history
-                                      to use.
+### Week 1 – Enterprise Structured Ingestion Firewall
 
-  **SQLite**                          A database stored in a single file
-                                      (`backend/data/chat.db`).
+The application classifies a payment-related message and displays its intent, risk profile, priority, action requirement, and estimated token information.
 
-  **React / Vite**                    React builds the UI from
-                                      components; Vite runs it in
-                                      development and builds it for
-                                      production.
+![Week 1 – Message classification](submission-screenshots/Week-1/week-1-classification.png)
 
-  **`.env` file**                     A private file holding your API
-                                      key. Never share or commit it.
+### Week 2 – Intent-Based AI Response Generator
 
-  **venv**                            A private Python environment just
-                                      for this project.
-  -----------------------------------------------------------------------
+The application generates a context-aware Markdown response and displays it in the React chat interface.
 
-## How a message flows through the app
+![Week 2 – AI response generation](submission-screenshots/week-2/week-2-response-generation.png)
 
-``` text
-You type in the React app (http://localhost:5173)
-        |
-        v
-POST /api/analyze { message, session_id? } --> FastAPI backend (port 8000)
-                                                  |
-    1. Check the input                         schemas/ingestion.py
-    2. WEEK 1: classify it                     services/llm_service.py       -- LLM call #1
-         +-- Pydantic validates the JSON
-    3. Estimate tokens                         utils/token_counter.py
-    4. WEEK 3: load recent history             services/database_service.py -- SQLite
-    5. WEEK 2: write a reply                   services/response_service.py -- LLM call #2
-    6. WEEK 3: save both messages               services/database_service.py -- SQLite
-                                                  |
-        <-- JSON: intent details + response_markdown + session_id
-        |
-The chat shows the answer; the right panel shows intent, risk and priority
-```
+### Week 3 – Conversation Memory and Chat History
 
-## Workshop output screenshots
+The first screenshot shows the start of a conversation. The second shows a follow-up question where the assistant recalls information from the same session.
 
-The screenshots below show the outputs produced by the running
-application during testing.
+![Week 3 – Conversation start](submission-screenshots/week-3/week-3-conversation-start.png)
 
-### Week 1 -- Enterprise Structured Ingestion Firewall
+![Week 3 – Follow-up memory](submission-screenshots/week-3/week-3-follow-up-memory.png)
 
-The message is classified as a payment issue. The application displays
-the detected intent, risk profile, priority, action requirement, and
-estimated input tokens.
+### Week 4 – Deployment and Live Application
 
-![Week 1 -- Message classification
-output](submission-screenshots/Week-1/week-1-classification.png)
+The first screenshot shows the deployed Indigo.ai chat home page with the backend connection status showing **Connected**.
 
-### Week 2 -- Intent-Based AI Response Generator
+![Week 4 – Deployed application home page](submission-screenshots/week-4/week-4-live-app-home.png)
 
-The application uses the detected intent to generate a context-relevant,
-Markdown-formatted response and displays it in the React chat interface.
+The second screenshot shows a conversation and an AI-generated response in the deployed application.
 
-![Week 2 -- AI response generation
-output](submission-screenshots/week-2/week-2-response-generation.png)
+![Week 4 – Live chat response](submission-screenshots/week-4/week-4-live-chat-response.png)
 
-### Week 3 -- Conversation Memory and Chat History
+## Run locally
 
-The first screenshot shows the conversation details provided by the user
-and acknowledged by the assistant.
+### Requirements
 
-![Week 3 -- Conversation
-start](submission-screenshots/week-3/week-3-conversation-start.png)
+- Python 3.10 or newer
+- Node.js 18 or newer
+- A Groq API key
+- Git
 
-The second screenshot shows the follow-up question. The assistant
-correctly recalls the name and laptop RAM details from the same
-conversation.
+### 1. Set up the backend
 
-![Week 3 -- Context-aware follow-up
-response](submission-screenshots/week-3/week-3-follow-up-memory.png)
+Open a terminal in the repository root:
 
-## What you need
-
--   **Python 3.10 or newer** (check with `python --version`)
--   **Node.js 18 or newer** (check with `node --version`):
-    https://nodejs.org
--   A free **Groq API key**: https://console.groq.com/keys
--   Internet connection
-
-## Run it (Windows PowerShell)
-
-You need **two terminals**: one for the backend, one for the frontend.
-
-### Step 1: Set up the backend (one time only)
-
-``` powershell
+```powershell
 cd backend
 python -m venv .venv
 .\.venv\Scripts\Activate.ps1
 pip install -r requirements.txt
 ```
 
-You'll know the venv is active when your prompt starts with `(.venv)`.
+### 2. Configure backend environment variables
 
-### Step 2: Add your API key (one time only)
+Create your local environment file:
 
-``` powershell
+```powershell
 copy .env.example .env
 notepad .env
 ```
 
-Replace the placeholder key with yours, then save:
+Add your own Groq API key and model configuration. Do not commit `.env` or share your API key.
 
-``` env
-GROQ_API_KEY=gsk_your_real_key_here
+```env
+GROQ_API_KEY=your_groq_api_key
 GROQ_MODEL=openai/gpt-oss-120b
 ```
 
-No database setup is needed; the SQLite file is created automatically.
+Add any database configuration required by your local setup. The application creates/initializes its configured database during startup.
 
-### Step 3: Start the backend (Terminal 1)
+### 3. Start the backend
 
-Still inside `backend`, with `(.venv)` showing:
+From the `backend` directory, with the virtual environment activated:
 
-``` powershell
-uvicorn app.main:app --reload --port 8000
+```powershell
+python -m uvicorn app.main:app --reload --port 8000
 ```
 
-Check it at http://127.0.0.1:8000/health. You should see
-`{"status":"ok",...,"database":"sqlite"}`. Leave this terminal running.
+Check the backend at:
 
-### Step 4: Start the frontend (Terminal 2)
+- Health: http://127.0.0.1:8000/health
+- API documentation: http://127.0.0.1:8000/docs
 
-Open a **new** terminal in the project root:
+### 4. Configure and start the frontend
 
-``` powershell
+Open a second terminal in the repository root:
+
+```powershell
 cd frontend-react
-npm install        # first time only
+npm install
+```
+
+Create `frontend-react/.env` and set the backend URL:
+
+```env
+VITE_API_URL=http://127.0.0.1:8000
+```
+
+Then start the frontend:
+
+```powershell
 npm run dev
 ```
 
-### Step 5: Open the app
+Open http://localhost:5173.
 
-Go to http://localhost:5173 and click **Get Started**. The sidebar dot
-is green when the backend is connected.
+To stop the local servers, press `Ctrl + C` in their respective terminals.
 
-To stop the servers, press `Ctrl + C` in each terminal.
+## Deployment configuration
 
-On macOS/Linux, use `source .venv/bin/activate` instead of
-`Activate.ps1`, and `cp` instead of `copy`.
+### Render – backend
 
-## Where is my chat history?
+The backend is deployed from the `backend/` directory.
 
-In `backend/data/chat.db`, created the first time the backend starts.
-Ways to look at it:
+- **Root directory:** `backend`
+- **Build command:** `pip install -r requirements.txt`
+- **Start command:** `uvicorn app.main:app --host 0.0.0.0 --port $PORT`
 
--   In the browser: http://127.0.0.1:8000/api/conversations
--   In VS Code: install the **SQLite Viewer** extension and click the
-    file
--   To start fresh: stop the backend and delete the `backend/data`
-    folder
+Configure the required backend environment variables in Render. For example:
 
-The database is in `.gitignore`, so your chats are never pushed to
-GitHub.
+- `GROQ_API_KEY`
+- `GROQ_MODEL`
+- `DATABASE_URL` (if using the hosted PostgreSQL database)
+- `ALLOWED_ORIGINS`
 
-## Common problems
+The `ALLOWED_ORIGINS` value must include the deployed frontend origin:
 
-  ------------------------------------------------------------------------------------------------------------------
-  What you see                      Why                     Fix
-  --------------------------------- ----------------------- --------------------------------------------------------
-  Red dot / "Backend offline" in    Backend isn't running   Do Step 3
-  the app                                                   
-
-  `npm` is not recognized           Node.js isn't installed Install it from https://nodejs.org and reopen the
-                                                            terminal
-
-  `{"detail":"Not Found"}` at       Normal: there is no `/` Use `/docs` or `/health`
-  http://127.0.0.1:8000/            route                   
-
-  `502 The AI request failed`       Wrong key, or the model See
-                                    name doesn't exist      [backend/README.md](backend/README.md#troubleshooting)
-
-  `Activate.ps1 cannot be loaded`   PowerShell blocks       Run
-                                    scripts                 `Set-ExecutionPolicy -Scope CurrentUser RemoteSigned`
-                                                            once
-
-  Port already in use               An old server is still  Press `Ctrl + C` in its terminal, then start again
-                                    running                 
-  ------------------------------------------------------------------------------------------------------------------
-
-## Project map
-
-``` text
-enterprise-ingestion-firewall/
-â”œâ”€â”€ backend/                         <-- Python API (see backend/README.md)
-â”‚   â”œâ”€â”€ app/
-â”‚   â”‚   â”œâ”€â”€ main.py                  <-- all API routes
-â”‚   â”‚   â”œâ”€â”€ config.py                <-- reads your .env file
-â”‚   â”‚   â”œâ”€â”€ schemas/
-â”‚   â”‚   â”‚   â”œâ”€â”€ ingestion.py         <-- Week 1 data rules (input + intent result)
-â”‚   â”‚   â”‚   â””â”€â”€ assistant.py         <-- Week 2 data rules (adds answer + session_id)
-â”‚   â”‚   â”œâ”€â”€ services/
-â”‚   â”‚   â”‚   â”œâ”€â”€ llm_service.py       <-- Week 1: classify the message
-â”‚   â”‚   â”‚   â”œâ”€â”€ response_service.py  <-- Week 2: write the answer
-â”‚   â”‚   â”‚   â””â”€â”€ database_service.py  <-- Week 3: save/load chats in SQLite
-â”‚   â”‚   â””â”€â”€ utils/token_counter.py   <-- estimates token count
-â”‚   â”œâ”€â”€ sql/schema.sql               <-- the database tables (reference)
-â”‚   â”œâ”€â”€ tests/                       <-- pytest tests
-â”‚   â”œâ”€â”€ .env.example                 <-- copy this to .env
-â”‚   â””â”€â”€ requirements.txt
-â”œâ”€â”€ frontend-react/                  <-- React + Vite app (see frontend-react/README.md)
-â”œâ”€â”€ submission-screenshots/          <-- screenshots for Weeks 1, 2 and 3
-â””â”€â”€ README.md                        <-- project overview and setup
+```env
+ALLOWED_ORIGINS=https://ai-engineer-workshop-plum.vercel.app
 ```
 
-## Good to know
+Use the exact frontend origin configured in Vercel. Do not add a trailing slash unless your backend's CORS configuration specifically expects one.
 
--   Each message makes **two** LLM calls (classify, then answer).
--   The assistant uses the **last 12 messages** of a conversation as
-    memory.
--   The app does **not** really look up orders or reset passwords; it
-    only classifies and gives advice.
--   Token counts are **estimates**, not what Groq bills.
--   Schema validation checks the **shape** of data, not whether the AI's
-    answer is true.
+### Vercel – frontend
 
-## Next reading
+The frontend is deployed from the `frontend-react/` directory.
 
--   [backend/README.md](backend/README.md): each Python file, the API,
-    the database, tests, troubleshooting
--   [frontend-react/README.md](frontend-react/README.md): how the React
-    app is organized and connects to the API
+Set this project environment variable in Vercel for the Production environment:
 
+```env
+VITE_API_URL=https://ai-engineer-workshop-fxux.onrender.com
+```
+
+After changing environment variables, create a new deployment so the frontend build uses the updated value.
+
+## API endpoints
+
+The backend exposes endpoints including:
+
+- `GET /health` – backend health check
+- `GET /api/conversations` – list conversations
+- `GET /api/conversations/archived` – list archived conversations
+- `GET /api/conversations/{session_id}/messages` – retrieve messages for a session
+- `POST /api/analyze` – analyze a message and generate a response
+- `POST /api/analyze/stream` – stream a generated response
+
+See the complete, current request and response schemas in the [Swagger API documentation](https://ai-engineer-workshop-fxux.onrender.com/docs).
+
+## Repository structure
+
+```text
+AI-Engineer-Workshop/
+├── backend/
+│   ├── app/
+│   ├── data/
+│   ├── sql/
+│   ├── tests/
+│   ├── .env.example
+│   └── requirements.txt
+├── frontend-react/
+│   ├── src/
+│   ├── public/
+│   ├── .env.example
+│   └── package.json
+├── submission-screenshots/
+│   ├── Week-1/
+│   ├── week-2/
+│   ├── week-3/
+│   └── week-4/
+├── render.yaml
+└── README.md
+```
+
+## Important notes
+
+- The assistant provides AI-generated guidance. It does not independently access a retailer's order system, process refunds, or change account details.
+- Token counts are estimates and may differ from provider-reported usage.
+- Keep `.env`, API keys, database credentials, and local virtual environments out of GitHub.
+- The backend may take a short time to respond when a free hosting service wakes from inactivity.
